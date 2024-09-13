@@ -4,6 +4,9 @@ module vulkan/vulkan
 import std/num/int32
 
 extern import
+  c { vcpkg="vulkan-headers" }
+
+extern import
   c file "vulkan-inline.c"
 
 abstract value struct vk
