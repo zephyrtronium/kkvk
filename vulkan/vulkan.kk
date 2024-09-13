@@ -16,7 +16,7 @@ abstract value struct vk-version
   v: int32
 
 extern vk-make-api-version(variant: int32, major: int32, minor: int32, patch: int32): int32
-  c inline "(VK_MAKE_API_VERSION($1, $2, $3, $4))"
+  c inline "(VK_MAKE_API_VERSION(#1, #2, #3, #4))"
 
 // Create a Vulkan API version.
 // This is a thin wrapper around the VK_MAKE_API_VERSION macro;
