@@ -4,7 +4,9 @@
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
-#include <vulkan/vulkan.h>
+
+// TODO(zeph): preprocessor logic for wsi defines?
+#include <volk.h>
 
 #include "vulkan_vulkan.h"
 

@@ -4,10 +4,48 @@ module vulkan/vulkan
 import std/num/int32
 
 extern import
-  c { vcpkg="vulkan-headers" }
+  c { vcpkg="volk"; library="volk" }
 
 extern import
   c file "vulkan-inline.c"
+
+pub value type vk-result
+  // VK_SUCCESS.
+  Success
+  // Positive VkResult values: VK_NOT_READY, VK_OPERATION_DEFERRED_KHR, ...
+  Status(v: int32)
+  // Negative VkResult values: VK_ERROR_OUT_OF_HOST_MEMORY, VK_ERROR_UNKNOWN, ...
+  Err(v: int32)
+
+pub fun vk-result/show(v: vk-result): string
+  match v
+    Success -> "VK_SUCCESS"
+    Status(x) ->
+      match x.int
+        1 -> "VK_NOT_READY"
+        2 -> "VK_TIMEOUT"
+        3 -> "VK_EVENT_SET"
+        4 -> "VK_EVENT_RESET"
+        5 -> "VK_INCOMPLETE"
+        _ -> "(VkResult)" ++ x.show
+    Err(x) ->
+      match x.int
+        -1 -> "VK_ERROR_OUT_OF_HOST_MEMORY"
+        -2 -> "VK_ERROR_OUT_OF_DEVICE_MEMORY"
+        -3 -> "VK_ERROR_INITIALIZATION_FAILED"
+        -4 -> "VK_ERROR_DEVICE_LOST"
+        _ -> "(VkResult)" ++ x.show
+
+fun int32/vk-result(r: int32): vk-result
+  if r == 0.int32 then return Success
+  if r > 0.int32 then return Status(r)
+  Err(r)
+
+extern volk-initialize(): ndet int32
+  c inline "volkInitialize()"
+
+pub inline fun initialize(): ndet vk-result
+  volk-initialize().vk-result
 
 abstract value struct vk
   obj: any
