@@ -36,7 +36,7 @@ pub fun vk-result/show(v: vk-result): string
         -4 -> "VK_ERROR_DEVICE_LOST"
         _ -> "(VkResult)" ++ x.show
 
-fun int32/vk-result(r: int32): vk-result
+inline fun int32/vk-result(r: int32): vk-result
   if r == 0.int32 then return Success
   if r > 0.int32 then return Status(r)
   Err(r)
