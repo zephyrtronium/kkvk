@@ -77,12 +77,26 @@ pub val version-v12 = Vk-Version(vk-version-v12)
 // API version 1.3.
 pub val version-v13 = Vk-Version(vk-version-v13)
 
-extern vk-create-instance(info: instance-create, app: maybe<application>): any
-  c "kk_vulkan_create_instance"
+extern vk-create-instance-params(enumerate-portability: bool): any
+  c "kk_vulkan_create_instance_params"
+extern vk-create-instance-set-application-info(params: any, name: string, appver: int32, engine: string, engver: int32, apiver: int32): ()
+  c "kk_vulkan_create_instance_set_application_info"
+extern vk-create-instance-set-layers(params: any, layers: vector<string>): ()
+  c "kk_vulkan_create_instance_set_layers"
+extern vk-create-instance-set-extensions(params: any, extensions: vector<string>): ()
+  c "kk_vulkan_create_instance_set_extensions"
+extern vk-create-instance-and-free-info(params: any): any
+  c "kk_vulkan_create_instance_and_free_info"
 
 // VkCreateInstance.
 pub fun vk/create(info: instance-create, app: maybe<application>): vk
-  Vk(vk-create-instance(info, app))
+  var p := vk-create-instance-params(info.enumerate-portability)
+  match app
+    Nothing -> ()
+    Just(a) -> vk-create-instance-set-application-info(p, a.application-name, a.application-version, a.engine-name, a.engine-version, a.api-version.v)
+  if !info.enabled-layers.is-nil then vk-create-instance-set-layers(p, info.enabled-layers.vector())
+  if !info.enabled-extensions.is-nil then vk-create-instance-set-extensions(p, info.enabled-extensions.vector())
+  Vk(vk-create-instance-and-free-info(p))
 
 // VkInstanceCreateInfo.
 pub struct instance-create
